@@ -9,15 +9,18 @@ Used to verify the matching of capTCHA or other characters
 ```js  
 /** main */
 import ValidateInput from "ValidateInput"
+import "validateinput/dist/style.css";
 app.use(ValidateInput)
+
 ```
-or 
-```code  Use it directly
+or Use it directly
+```js  
 
     <ValidateInput></ValidateInput>
   
 <script setup lang="ts">
 import ValidateInput from './packages/validateInput.vue'
+import "validateinput/dist/style.css";
 </script>
 
 ```
