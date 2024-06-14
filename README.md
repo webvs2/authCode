@@ -29,11 +29,14 @@ import "validateinput/dist/style.css";
 ## API
 
 ### Attributes
+
 :::warning
 
 When type is `code` mode, the `el-input` component is used
 
 :::
+
+
 | Name   | Description                                                      | Type                        | Default  |
 | ------ | ---------------------------------------------------------------- | --------------------------- | -------- |
 | length | Enter the number of impressions for the content [`code`nullify ] | ^[string ]                  | 4        |
