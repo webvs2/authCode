@@ -16,6 +16,8 @@
           :class="{
             [n('', 'activate')]: index === presentIndex,
             [n('', 'item')]: true,
+            [n('', 'In')]:
+              index === presentIndex && showVlaue[index - 1] === ' ',
           }"
           @click.stop="click(index)"
         >
@@ -27,11 +29,10 @@
           type="text"
           v-model="value"
           :maxlength="props.length"
-          :max="props.max"
         />
       </template>
       <template v-if="props.type === 'code'">
-        <el-input ref="inputRef" :max="props.max" v-model="value"></el-input>
+        <input ref="inputRef" :max="props.length" v-model="value" />
       </template>
     </div>
   </div>
@@ -77,45 +78,48 @@ watch(value, (newVal) => {
   if (result && newVal === result) {
     emit('succeed', true)
   }
-  presentIndex.value = value.value.length
+  presentIndex.value = newVal.length
   emit('change', newVal)
 })
-
+const focus = () => {
+  inputRef.value!.focus()
+}
+const blur = () => {
+  inputRef.value!.blur()
+}
+const detectionFocus = (fn?: () => void) => {
+  inputRef.value!.addEventListener('focus', () => {
+    fn && fn()
+  })
+}
+const detectionBlur = (fn?: () => void) => {
+  inputRef.value!.addEventListener('blur', () => {
+    fn && fn()
+  })
+}
 onMounted(() => {
   if (props.type === 'number' && props.length > 0) {
-    inputRef.value!.focus()
-    presentIndex.value = 1
+    focus()
     value.value = ''.repeat(props.length)
+    presentIndex.value = 1
   }
 })
 
-// /**
-//  * @description: 点击输入框
-//  * @param {number} index
-//  * @return {*}
-//  */
-// const getNumberInputNode = (index: number): HTMLInputElement => {
-//   return (codeRef.value as HTMLInputElement)!.children[
-//     index
-//   ] as HTMLInputElement
-// }
 /**
  * @description: 点击输入框
  * @param {number} index
  * @return {*}
  */
 const click = (index: number) => {
-  inputRef.value!.focus()
+  focus()
   presentIndex.value = index
-  let conversion = value.value.split('')
-  conversion[index - 1] = ''
-  value.value = conversion.join('')
 }
-const focus = () => {
-  inputRef.value!.focus()
-}
+
 defineExpose({
   focus,
+  blur,
+  detectionFocus,
+  detectionBlur,
   value,
 })
 </script>
@@ -123,11 +127,14 @@ defineExpose({
   <style lang="scss" scoped>
 @import '../css/mixin.scss';
 @include b(validateInput) {
+  display: inline-block;
+  width: 100%;
   @include e(box) {
-    width: 200px;
+    min-width: 100px;
     padding: 10px 18px;
     display: inline-flex;
     position: relative;
+    gap: 15px;
     justify-content: space-around;
   }
   @include e(head) {
@@ -151,6 +158,7 @@ defineExpose({
   @include m(item) {
     width: 40px;
     height: 40px;
+
     border: 1px solid #e4e7ed;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), 0 0 2px rgba(0, 0, 0, 0.04);
     display: inline-flex;
@@ -164,6 +172,23 @@ defineExpose({
     position: relative;
     box-shadow: 0 1px 4px #409eff, 0 0 4px #409eff;
     border: 1px solid #409eff;
+  }
+  @include m(In) {
+    &::after {
+      content: '|';
+      position: absolute;
+      top: 0;
+      color: #909399;
+      line-height: 200%;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      //background-color: #409eff;
+      opacity: 0;
+      animation: blink 1.6s infinite;
+    }
   }
 }
 @keyframes blink {
